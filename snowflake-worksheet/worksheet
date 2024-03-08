@@ -1,0 +1,49 @@
+-- Create an external stage integration for AWS S3
+CREATE STORAGE INTEGRATION csv_s3_stage 
+ TYPE = EXTERNAL_STAGE 
+ STORAGE_PROVIDER = 'S3' 
+ ENABLED = TRUE 
+ STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::123456789012:role/mysnowflakeuserrole'
+ STORAGE_ALLOWED_LOCATIONS = ('s3://aws-etl-data-output/');
+
+-- Alter the storage integration to set the allowed locations
+ALTER STORAGE INTEGRATION csv_s3_stage
+SET STORAGE_ALLOWED_LOCATIONS = ('s3://aws-etl-data-output/');
+
+-- Describe the integration
+DESC INTEGRATION csv_s3_stage;
+
+-- Grant permissions to create stage on the role and schema
+GRANT CREATE STAGE ON SCHEMA public TO ROLE myrole;
+
+-- Switch to the desired database
+USE SCHEMA mydb.public;
+
+-- List the stage configuration
+LIST @csv_s3_stage;
+
+-- Create a table in the database
+CREATE TABLE mydb.public.stock_data (
+   open FLOAT,
+   volume INTEGER,
+   date DATE,
+   close FLOAT,
+   high FLOAT,
+   low FLOAT
+);
+
+-- Create a file format for the data stored in the S3 bucket
+CREATE OR REPLACE FILE FORMAT mydb.public.my_csv_format
+TYPE = 'CSV'
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+SKIP_HEADER = 1
+TIMESTAMP_FORMAT = 'YYYY-MM-DD';
+
+-- Copy Into your table from your stage
+COPY INTO mydb.public.stock_data
+FROM @csv_s3_stage
+FILE_FORMAT = (FORMAT_NAME = mydb.public.my_csv_format);
+
+
+
+
