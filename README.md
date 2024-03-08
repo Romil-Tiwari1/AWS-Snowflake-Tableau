@@ -50,13 +50,13 @@ The workflow consists of the following steps:
 
 Refer to the attached flowchart diagram for an overview of the project's architecture.
 
-![Project Flowchart](workflow/Blank board.pdf)
+![Project Flowchart](workflow/workflow.png)
 
 ## Visualization Output
 
 The final output of the project is a set of Tableau dashboards visualizing the stock data according to the specified requirements.
 
-![Dashboard Output](dashboard-output/Dashboard 1.png)
+![Dashboard Output](dashboard-output/dashboard.png)
 
 ## Conclusion
 
